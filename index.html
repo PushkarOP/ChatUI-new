@@ -1868,28 +1868,9 @@
         };
         //-------------------
 
-        let BASE_URL = 'https://api.nexusapi.tech/nexus/v1';
+        let BASE_URL = 'https://api.nexusapi.tech/nexus/v2';
         let currentChatId = null;
-        let availableModels = [{
-            "id": "gpt-3.5-turbo",
-            "object": "model",
-            "created": 1731473873,
-            "owned_by": "openai",
-            "tokens": 4000,
-            "pricing": {
-              "type": "per_token",
-              "coefficient": 1
-            },
-            "endpoints": [
-              "/v1/chat/completions"
-            ],
-            "premium_model": false,
-            "metadata": {
-              "vision": false,
-              "function_call": true,
-              "web_search": false
-            }
-          },
+        let availableModels = [
           {
             "id": "gpt-4o",
             "object": "model",
@@ -1905,8 +1886,28 @@
             ],
             "premium_model": false,
             "metadata": {
-              "vision": true,
-              "function_call": true,
+              "vision": false,
+              "function_call": false,
+              "web_search": false
+            }
+          },
+          {
+            "id": "gpt-3.5-turbo",
+            "object": "model",
+            "created": 1731473873,
+            "owned_by": "openai",
+            "tokens": 4000,
+            "pricing": {
+              "type": "per_token",
+              "coefficient": 1
+            },
+            "endpoints": [
+              "/v1/chat/completions"
+            ],
+            "premium_model": false,
+            "metadata": {
+              "vision": false,
+              "function_call": false,
               "web_search": false
             }
           },
@@ -1925,8 +1926,8 @@
             ],
             "premium_model": false,
             "metadata": {
-              "vision": true,
-              "function_call": true,
+              "vision": false,
+              "function_call": false,
               "web_search": false
             }
           },
@@ -1946,7 +1947,7 @@
             "premium_model": false,
             "metadata": {
               "vision": false,
-              "function_call": true,
+              "function_call": false,
               "web_search": false
             }
           },
@@ -1966,7 +1967,7 @@
             "premium_model": false,
             "metadata": {
               "vision": false,
-              "function_call": true,
+              "function_call": false,
               "web_search": false
             }
           },
@@ -1985,8 +1986,8 @@
             ],
             "premium_model": false,
             "metadata": {
-              "vision": true,
-              "function_call": true,
+              "vision": false,
+              "function_call": false,
               "web_search": false
             }
           },
@@ -2006,7 +2007,7 @@
             "premium_model": false,
             "metadata": {
               "vision": false,
-              "function_call": true,
+              "function_call": false,
               "web_search": false
             }
           },
@@ -2025,8 +2026,8 @@
             ],
             "premium_model": false,
             "metadata": {
-              "vision": true,
-              "function_call": true,
+              "vision": false,
+              "function_call": false,
               "web_search": false
             }
         }];
