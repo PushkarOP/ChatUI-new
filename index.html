@@ -2786,7 +2786,7 @@
             messageActions.className = 'message-actions';
             messageActions.innerHTML = `
                 <button class="btn btn-secondary message-action" onclick="copyMessage(this)">📋</button>
-                <button class="btn btn-secondary message-action" onclick="editMessage(this)">✏️</button>
+                <button class="btn btn-secondary message-action" onclick="editMessage(this)">✒️</button>
                 <button class="btn btn-secondary message-action" onclick="deleteMessage(this)">🗑️</button>
                 <button class="btn btn-secondary message-action" onclick="retryMessage(this)">  
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2809,7 +2809,33 @@
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
+        function waitForTurnstileToken(timeout = 5000) {
+            return new Promise((resolve, reject) => {
+                const startTime = Date.now();
+                
+                function checkToken() {
+                    const token = document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value;
+                    
+                    if (token) {
+                        resolve(token);
+                    } else if (Date.now() - startTime >= timeout) {
+                        reject(new Error('Turnstile verification timed out'));
+                    } else {
+                        setTimeout(checkToken, 100);
+                    }
+                }
+
+                checkToken();
+            });
+        }
         async function streamOpenAIRequest(messages, webSearch = false) {
+            let turnstileToken = '';
+            try {
+                turnstileToken = await waitForTurnstileToken();
+            } catch (error) {
+                console.error('Turnstile verification failed:', error);
+                throw new Error('Security verification failed. Please try again.');
+            }
             const url = `${BASE_URL}/chat/completions`;
             const headers = {
                 'Content-Type': 'application/json',
@@ -2931,7 +2957,7 @@
                             </div>
                             <div class="message-actions">
                                 <button class="btn btn-secondary message-action" onclick="copyMessage(this)">📋</button>
-                                <button class="btn btn-secondary message-action" onclick="editMessage(this)">✏️</button>
+                                <button class="btn btn-secondary message-action" onclick="editMessage(this)">✒️</button>
                                 <button class="btn btn-secondary message-action" onclick="deleteMessage(this)">🗑️</button>
                                 <button class="btn btn-secondary message-action" onclick="retryMessage(this)">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3039,7 +3065,7 @@
                             </div>
                             <div class="message-actions">
                                 <button class="btn btn-secondary message-action" onclick="copyMessage(this)">📋</button>
-                                <button class="btn btn-secondary message-action" onclick="editMessage(this)">✏️</button>
+                                <button class="btn btn-secondary message-action" onclick="editMessage(this)">✒️</button>
                                 <button class="btn btn-secondary message-action" onclick="deleteMessage(this)">🗑️</button>
                                 <button class="btn btn-secondary message-action" onclick="retryMessage(this)">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3194,7 +3220,13 @@
 
         async function generateChatTitle(messages) {
             const titlePrompt = "Generate a three to four words title summarizing our conversation. Respond with only the title and without any date, symbols or additional text. Remove enclosing quotation marks. IGNORE and do not include this prompt when generating title at any cost.\n\n";
-            
+            let turnstileToken = '';
+            try {
+                turnstileToken = await waitForTurnstileToken();
+            } catch (error) {
+                console.error('Turnstile verification failed:', error);
+                throw new Error('Security verification failed. Please try again.');
+            }
             const apiMessages = [
                 ...messages,
                 { role: 'user', content: JSON.stringify([{ type: 'text', text: titlePrompt }]) }
@@ -3576,7 +3608,7 @@
                 chatItem.innerHTML = `
                     <button class="btn btn-ghost" style="width: 100%; justify-content: flex-start;" onclick="loadChat('${chat.id}')">${chat.name}</button>
                     <div class="chat-item-actions">
-                        <button class="chat-item-action" onclick="renameChat('${chat.id}')">✏️</button>
+                        <button class="chat-item-action" onclick="renameChat('${chat.id}')">✒️</button>
                         <button class="chat-item-action" onclick="deleteChat('${chat.id}')">🗑️</button>
                     </div>
                 `;
@@ -3755,7 +3787,7 @@
                 chatItem.innerHTML = `
                     <button class="btn btn-ghost" style="width: 100%; justify-content: flex-start;" onclick="loadChat('${chat.id}')">${chat.name}</button>
                     <div class="chat-item-actions">
-                        <button class="chat-item-action" onclick="renameChat('${chat.id}')">✏️</button>
+                        <button class="chat-item-action" onclick="renameChat('${chat.id}')">✒️</button>
                         <button class="chat-item-action" onclick="deleteChat('${chat.id}')">🗑️</button>
                     </div>
                 `;
