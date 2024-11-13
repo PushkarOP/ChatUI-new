@@ -20,27 +20,10 @@
     <meta name="twitter:image:alt" content="NexusAI ChatGPT">
     <meta name="twitter:domain" content="www.nexusapi.tech">
     <meta name="twitter:url" content="https://www.nexusapi.tech">
-    
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-    <!-- Add KaTeX CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
-    <!-- Add KaTeX JS -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
-
-    <!-- File Parser -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.8/mammoth.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
     <script>
-        // Function to get a cookie by name
         function getCookie(name) {
           const cookies = document.cookie.split(';').map(cookie => cookie.trim());
-          console.log('Cookies Array:', cookies); // Debugging line
+          console.log('Cookies Array:', cookies); 
           for (let cookie of cookies) {
             if (cookie.startsWith(name + '=')) {
               return cookie.substring((name + '=').length);
@@ -58,11 +41,25 @@
           const sessionCookie = getCookie('session_id');
           console.log('Session Cookie:', sessionCookie);
           if (!sessionCookie) {
-            // If not, redirect to the login page
             window.location.href = 'https://www.nexusapi.tech?error=login';
           }
         };
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <!-- Add KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+    <!-- Add KaTeX JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+
+    <!-- File Parser -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.8/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
     <style>
         :root {
             --background: 0 0% 100%;
@@ -2897,7 +2894,8 @@
                 top_p: settings.topP,
                 top_k: settings.topK,
                 web_search: webSearch,
-                turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || ''
+                turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || '',
+                session_id: getCookie('session_id')
             });
         
             try {
@@ -3235,7 +3233,8 @@
                     stream: false,
                     max_tokens: 30,
                     temperature: 0.7,
-                    turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || ''
+                    turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || '',
+                    session_id: getCookie('session_id')
                 })
             });
         
