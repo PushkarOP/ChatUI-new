@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electron Hub AI Playground</title>
-    <link rel="icon" href="./images/electron.png" type="image/png">
+    <title>NexusAI ChatGPT</title>
+    <link rel="icon" href="./images/nexusai.png" type="image/png">
     
-    <meta property="og:image" content="./images/electron.png">
-    <meta property="og:description" content="Electron Hub AI Playground is a simple web app that allows you to chat with various AI models.">
-    <meta property="og:title" content="Electron Hub AI Playground">
-    <meta property="og:url" content="https://playground.electronhub.top">
+    <meta property="og:image" content="./images/nexusai.png">
+    <meta property="og:description" content="NexusAI ChatGPT is a simple web app that allows you to chat with various AI models.">
+    <meta property="og:title" content="NexusAI ChatGPT">
+    <meta property="og:url" content="https://www.nexusapi.tech">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Electron Hub AI Playground">
+    <meta property="og:site_name" content="NexusAI ChatGPT">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@electronhub">
-    <meta name="twitter:creator" content="@electronhub">
-    <meta name="twitter:title" content="Electron Hub AI Playground">
-    <meta name="twitter:description" content="Electron Hub AI Playground is a simple web app that allows you to chat with various AI models.">
-    <meta name="twitter:image" content="./images/electron.png">
-    <meta name="twitter:image:alt" content="Electron Hub AI Playground">
-    <meta name="twitter:domain" content="playground.electronhub.top">
-    <meta name="twitter:url" content="https://playground.electronhub.top">
+    <meta name="twitter:title" content="NexusAI ChatGPT">
+    <meta name="twitter:description" content="NexusAI ChatGPT is a simple web app that allows you to chat with various AI models.">
+    <meta name="twitter:image" content="./images/nexusai.png">
+    <meta name="twitter:image:alt" content="NexusAI ChatGPT">
+    <meta name="twitter:domain" content="www.nexusapi.tech">
+    <meta name="twitter:url" content="https://www.nexusapi.tech">
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
@@ -1868,7 +1866,7 @@
         };
         //-------------------
 
-        let BASE_URL = 'https://api.nexusapi.tech/v1/nexus';
+        let BASE_URL = 'https://api.nexusapi.tech/nexus/v1';
         let currentChatId = null;
         let availableModels = [{
             "id": "gpt-3.5-turbo",
@@ -2030,7 +2028,7 @@
               "web_search": false
             }
         }];
-        let selectedModel = 'gpt-3.5-turbo';
+        let selectedModel = 'gpt-4o';
         let imagesUploaded = [];
         let filesUploaded = [];
         let webSearchEnabled = false;
@@ -2561,7 +2559,7 @@
             } else if (ownedBy.includes('pawan')) {
                 return '<img src="./images/pawan.webp" alt="Pawan" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; position: relative;">';
             } else {
-                return '<img src="./images/electron.png" alt="Unknown" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; position: relative;">';
+                return '<img src="./images/nexusai.png" alt="Unknown" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; position: relative;">';
             }
         }
 
