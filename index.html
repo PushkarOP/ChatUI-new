@@ -1852,7 +1852,31 @@
             <button class="btn btn-primary" style="margin-top: 1rem;" onclick="saveSettings()">Save Settings</button>
         </div>
     </div>
-    
+    <script>
+        function getCookie(name) {
+          const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+          console.log('Cookies Array:', cookies); 
+          for (let cookie of cookies) {
+            if (cookie.startsWith(name + '=')) {
+              return cookie.substring((name + '=').length);
+            }
+          }
+          return null;
+        }
+  
+        function onTurnstileSuccess(token) {
+          console.log('Turnstile token:', token);
+        }
+  
+        window.onload = function() {
+          console.log('All Cookies:', document.cookie);
+          const sessionCookie = getCookie('session_id');
+          console.log('Session Cookie:', sessionCookie);
+          if (!sessionCookie) {
+            window.location.href = 'https://www.nexusapi.tech?error=login';
+          }
+        };
+    </script>
     <script>
         // Deprecated setup
         let apiKey = localStorage.getItem('apiKey') || '';
@@ -4285,31 +4309,6 @@
             updateMessageCost();
             loadRandomPrompts();
         }
-    </script>
-    <script>
-        function getCookie(name) {
-          const cookies = document.cookie.split(';').map(cookie => cookie.trim());
-          console.log('Cookies Array:', cookies); 
-          for (let cookie of cookies) {
-            if (cookie.startsWith(name + '=')) {
-              return cookie.substring((name + '=').length);
-            }
-          }
-          return null;
-        }
-  
-        function onTurnstileSuccess(token) {
-          console.log('Turnstile token:', token);
-        }
-  
-        window.onload = function() {
-          console.log('All Cookies:', document.cookie);
-          const sessionCookie = getCookie('session_id');
-          console.log('Session Cookie:', sessionCookie);
-          if (!sessionCookie) {
-            window.location.href = 'https://www.nexusapi.tech?error=login';
-          }
-        };
     </script>
 </body>
 </html>
