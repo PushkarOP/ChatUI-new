@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <!-- Add KaTeX CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
     <!-- Add KaTeX JS -->
@@ -392,8 +392,14 @@
         }
     
         .model-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             position: relative;
-            display: inline-block;
+        }
+
+        .cf-turnstile {
+            margin-left: 1rem;  /* Add space between model selector and turnstile */
         }
     
         .model-selector-btn {
@@ -1662,11 +1668,7 @@
                         </svg>Delete All Conversations
                     </button>
                     <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
-                        <button class="btn btn-ghost" style="width: 48%;" onclick="openModal()"> 
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
-                            </svg><span style="margin-left: 0.5rem;">API Key</span>
-                        </button>
+      
                         <button class="btn btn-ghost" style="width: 48%;" onclick="openSettingsModal()">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="3"></circle>
@@ -1688,6 +1690,7 @@
                     <div id="modelSelectorContent" class="model-selector-content">
                         <!-- Models will be dynamically loaded here -->
                     </div>
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAAAzRsaZd0P9-qFot"></div>
                 </div>
                 <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
             </div>
@@ -1697,7 +1700,6 @@
                         <img src="./images/openai.svg" alt="OpenAI" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; position: relative;">
                     </div>
                     <h2>How can I help you?</h2>
-                    <button class="btn btn-secondary" onclick="openModal()" style="border-radius: 9999px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plug"><path d="M12 22v-5"></path><path d="M9 8V2"></path><path d="M15 8V2"></path><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"></path></svg> Set API Key</button>
                     <p class="prompt-title">Ask me anything or try these example prompts</p>
                     <div id="promptSuggestions" class="prompt-suggestions"></div>
                 </div>
@@ -2694,12 +2696,6 @@
             }
         }
 
-        function openModal() {
-            document.getElementById("apiKeyModal").style.display = "flex";
-            document.getElementById("apiKeyInput").value = apiKey; // Autofill with existing key
-        }
-
-        // Add this function to toggle API key visibility
         function toggleApiKeyVisibility() {
             const apiKeyInput = document.getElementById("apiKeyInput");
             const eyeIcon = document.getElementById("eyeIcon");
@@ -2870,7 +2866,8 @@
                 temperature: settings.temperature,
                 top_p: settings.topP,
                 top_k: settings.topK,
-                web_search: webSearch
+                web_search: webSearch,
+                turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || ''
             });
         
             try {
@@ -3207,7 +3204,8 @@
                     }),
                     stream: false,
                     max_tokens: 30,
-                    temperature: 0.7
+                    temperature: 0.7,
+                    turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || ''
                 })
             });
         
@@ -3682,7 +3680,6 @@
                 <div class="chat-welcome">
                     <div class="chat-icon">AI</div>
                     <h2>How can I help you?</h2>
-                    <button class="btn btn-secondary" onclick="openModal()" style="border-radius: 9999px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plug"><path d="M12 22v-5"></path><path d="M9 8V2"></path><path d="M15 8V2"></path><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"></path></svg> Set API Key</button>
                     <p class="prompt-title">Ask me anything or try these example prompts</p>
                     <div id="promptSuggestions" class="prompt-suggestions"></div>
                 </div>
