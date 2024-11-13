@@ -1897,15 +1897,15 @@
         let BASE_URL = 'https://api.nexusapi.tech/nexus/v2';
         let currentChatId = null;
         let availableModels = [
-          {
-            "id": "gpt-4o",
+        {
+            "id": "gpt-3.5-turbo",
             "object": "model",
             "created": 1731473873,
             "owned_by": "openai",
-            "tokens": 128000,
+            "tokens": 4000,
             "pricing": {
               "type": "per_token",
-              "coefficient": 1.25
+              "coefficient": 1
             },
             "endpoints": [
               "/v1/chat/completions"
@@ -1918,14 +1918,14 @@
             }
           },
           {
-            "id": "gpt-3.5-turbo",
+            "id": "gpt-4o",
             "object": "model",
             "created": 1731473873,
             "owned_by": "openai",
-            "tokens": 4000,
+            "tokens": 128000,
             "pricing": {
               "type": "per_token",
-              "coefficient": 1
+              "coefficient": 1.25
             },
             "endpoints": [
               "/v1/chat/completions"
@@ -2224,7 +2224,7 @@
                 id: chat.id || `Chat ${Date.now()}`,
                 name: chat.name || `Chat ${Date.now()}`,
                 messages: chat.messages || [],
-                model: chat.model || 'gpt-3.5-turbo'
+                model: chat.model || 'gpt-4o'
               };
           
               await putInStore(CHAT_STORE, newChat);
@@ -4270,7 +4270,7 @@
             const defaultModelIcon = getDefaultModelIcon();
             document.getElementById("modelSelectorBtn").innerHTML = `
                 <span class="model-icon">${defaultModelIcon}</span>
-                <span id="selectedModel">gpt-3.5-turbo</span>
+                <span id="selectedModel">gpt-4o</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
             `;
             setupRevertActionButtons();
