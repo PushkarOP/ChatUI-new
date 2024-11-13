@@ -3029,12 +3029,31 @@
                     await saveChatToIndexedDB('assistant', JSON.stringify([{ 'type': 'text', 'text': fullResponse}]));
                 } else {
                     console.error('Error:', error);
-                    document.getElementById('chatArea').innerHTML += `
-                        <div style="margin-bottom: 1rem;">
+                    const errorContainer = document.createElement('div');
+                    errorContainer.className = 'message-container assistant-message';
+                    errorContainer.innerHTML = `
+                        <div class="message-header">
+                            <div class="assistant-info">
+                                <span class="model-icon">${getModelIcon(availableModels.find(m => m.id === selectedModel))}</span>
+                                <span>${selectedModel}</span>
+                            </div>
+                            <div class="message-actions">
+                                <button class="btn btn-secondary message-action" onclick="copyMessage(this)">📋</button>
+                                <button class="btn btn-secondary message-action" onclick="editMessage(this)">✏️</button>
+                                <button class="btn btn-secondary message-action" onclick="deleteMessage(this)">🗑️</button>
+                                <button class="btn btn-secondary message-action" onclick="retryMessage(this)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="message-content">
                             <strong>Error:</strong> 
                             <p style="background-color: hsl(var(--destructive)); color: hsl(var(--destructive-foreground)); padding: 0.5rem; border-radius: var(--radius);">${error.message}</p>
                         </div>
                     `;
+                    document.getElementById('chatArea').appendChild(errorContainer);
                 }
             } finally {
                 // Re-enable send button and hide stop button
