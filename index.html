@@ -399,7 +399,15 @@
         }
 
         .cf-turnstile {
-            margin-left: 1rem;  /* Add space between model selector and turnstile */
+            margin-left: 1rem;
+            transform: scale(0.75);
+            transform-origin: left center;
+        }
+
+        .cf-turnstile iframe {
+            height: 40px !important;  /* Match height with model selector */
+            border-radius: var(--radius) !important;
+            overflow: hidden;
         }
     
         .model-selector-btn {
