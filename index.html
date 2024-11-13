@@ -2897,7 +2897,7 @@
                 turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || '',
                 session: getCookie('session_id')
             });
-        
+            turnstile.reset();
             try {
                 const response = await fetch(url, {
                     method: 'POST',
@@ -3242,6 +3242,8 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
         
+            turnstile.reset();
+
             const data = await response.json();
             return data.choices[0].message.content.trim();
         }
