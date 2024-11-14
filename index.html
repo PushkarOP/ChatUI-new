@@ -548,10 +548,11 @@
         }
     
         .chat-history {
-            max-height: calc(100vh - 200px); /* Adjust the height as needed */
+            max-height: calc(100vh - 400px);
             overflow-y: auto;
+            scroll-behavior: smooth;
         }
-            
+        
         /* Firefox scrollbar styles */
         .chat-history {
             scrollbar-width: thin;
@@ -1656,6 +1657,7 @@
                 <div class="sidebar-section">
                     <div class="sidebar-title">Chat History</div>
                     <div id="chatHistory" class="chat-history"></div>
+                    <button id="loadMoreBtn" class="load-more">Load More</button>
                 </div>
                 <div class="sidebar-section" style="margin-top: auto;">
                     <button id="deleteAllBtn" class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem;">
