@@ -239,12 +239,14 @@
             display: flex;
             flex-direction: column;
             transition: transform 0.3s ease-in-out;
+            height: 100vh; /* Ensure the sidebar fills the viewport height */
         }
     
         .main-content {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            height: 100vh; /* Ensure the main content fills the viewport height */
         }
     
         .header {
@@ -364,6 +366,8 @@
     
         .sidebar-section {
             padding: 1rem;
+            flex-grow: 1; /* Allow the chat history section to grow and fill available space */
+            overflow-y: auto; /* Enable scrolling if content overflows */
         }
     
         .sidebar-title {
@@ -4164,7 +4168,7 @@
             }
             if (!event.target.matches('.model-selector-btn')) {
                 var dropdowns = document.getElementsByClassName("model-selector-content");
-                for (var i = 0; i < dropdowns.length; i++) {
+                for (var i =0; i < dropdowns.length; i++) {
                     var openDropdown = dropdowns[i];
                     if (openDropdown.classList.contains('show')) {
                         openDropdown.classList.remove('show');
