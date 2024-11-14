@@ -239,14 +239,12 @@
             display: flex;
             flex-direction: column;
             transition: transform 0.3s ease-in-out;
-            height: 100vh; /* Ensure the sidebar fills the viewport height */
         }
     
         .main-content {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            height: 100vh; /* Ensure the main content fills the viewport height */
         }
     
         .header {
@@ -264,17 +262,12 @@
         }
     
         .chat-area {
-            flex-grow: 1; /* Allow the chat area to grow and fill available space */
-            overflow-y: auto; /* Enable scrolling if content overflows */
+            flex-grow: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
             background-color: hsl(var(--card));
             scrollbar-width: inherit;
             scrollbar-color: hsl(var(--border)) transparent;
-        }
-    
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh; /* Make the container fill the viewport height */
         }
     
         .input-area {
@@ -366,8 +359,6 @@
     
         .sidebar-section {
             padding: 1rem;
-            flex-grow: 1; /* Allow the chat history section to grow and fill available space */
-            overflow-y: auto; /* Enable scrolling if content overflows */
         }
     
         .sidebar-title {
@@ -1616,6 +1607,151 @@
                 font-size: 0.8rem;
             }
         }
+
+        /* Enhanced Message Container Styling */
+        .message-container {
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 12px;
+            transition: background-color 0.2s ease;
+        }
+
+        .message-container:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        /* Improved Message Header */
+        .message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        /* Enhanced Message Actions */
+        .message-actions {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .message-container:hover .message-actions {
+            opacity: 1;
+        }
+
+        .message-action {
+            padding: 0.35rem;
+            margin-left: 0.5rem;
+            border-radius: 6px;
+            background: transparent;
+            transition: background-color 0.2s ease;
+        }
+
+        .message-action:hover {
+            background-color: hsl(var(--accent));
+        }
+
+        /* Refined Chat Input Area */
+        .chat-input-container {
+            background-color: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #userInput {
+            min-height: 60px;
+            padding: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Enhanced Button Styling */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-primary:hover {
+            background-color: hsl(var(--primary) / 0.9);
+        }
+
+        /* Improved Model Selector */
+        .model-selector-btn {
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: 1px solid hsl(var(--border));
+            transition: all 0.2s ease;
+        }
+
+        .model-selector-content {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Enhanced File Upload Preview */
+        .file-preview-item, .image-preview-item {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            background-color: hsl(var(--secondary));
+            transition: transform 0.2s ease;
+        }
+
+        .file-preview-item:hover, .image-preview-item:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Refined Dark Mode */
+        .dark-mode {
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --card: 222.2 84% 4.9%;
+            --card-foreground: 210 40% 98%;
+            --popover: 222.2 84% 4.9%;
+            --popover-foreground: 210 40% 98%;
+            --primary: 217.2 91.2% 59.8%;
+            --primary-foreground: 222.2 47.4% 11.2%;
+            --secondary: 217.2 32.6% 17.5%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --accent: 217.2 32.6% 17.5%;
+            --accent-foreground: 210 40% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 217.2 32.6% 17.5%;
+            --input: 217.2 32.6% 17.5%;
+            --ring: 224.3 76.3% 48%;
+        }
+
+        /* Improved Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: hsl(var(--muted));
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: hsl(var(--muted-foreground));
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -1882,7 +2018,7 @@
           const sessionCookie = getCookie('session_id');
           console.log('Session Cookie:', sessionCookie);
           if (!sessionCookie) {
-            window.location.href = 'https://www.nexusapi.tech?error=login';
+            //window.location.href = 'https://www.nexusapi.tech?error=login';
           }
         });
     </script>
@@ -2047,26 +2183,6 @@
           },
           {
             "id": "llama-3.2-90b",
-            "object": "model",
-            "created": 1731473873,
-            "owned_by": "meta",
-            "tokens": 128000,
-            "pricing": {
-              "type": "per_token",
-              "coefficient": 1.5
-            },
-            "endpoints": [
-              "/v1/chat/completions"
-            ],
-            "premium_model": false,
-            "metadata": {
-              "vision": false,
-              "function_call": false,
-              "web_search": false
-            }
-          },
-          {
-            "id": "llama-3.3-7b",
             "object": "model",
             "created": 1731473873,
             "owned_by": "meta",
@@ -4168,7 +4284,7 @@
             }
             if (!event.target.matches('.model-selector-btn')) {
                 var dropdowns = document.getElementsByClassName("model-selector-content");
-                for (var i =0; i < dropdowns.length; i++) {
+                for (var i = 0; i < dropdowns.length; i++) {
                     var openDropdown = dropdowns[i];
                     if (openDropdown.classList.contains('show')) {
                         openDropdown.classList.remove('show');
