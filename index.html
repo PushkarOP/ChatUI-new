@@ -3587,21 +3587,18 @@
         // Add event listener to search input
         document.querySelector('.sidebar-section input[type="text"]').addEventListener('input', searchChats);
 
+        
         async function updateChatHistorySidebar() {
             const chatHistoryElement = document.getElementById('chatHistory');
             
-            // Store the current scroll position
             const scrollPosition = chatHistoryElement.scrollTop;
             
             chatHistoryElement.innerHTML = '';
             
             const allChats = await getAllFromStore(CHAT_STORE);
-            // Sort the chats by date, most recent first
             const reversedChats = allChats.reverse();
-        
-            const chatsToShow = reversedChats.slice(0, 5);
             
-            chatsToShow.forEach(chat => {
+            reversedChats.forEach(chat => {
                 const chatItem = document.createElement('div');
                 chatItem.className = 'chat-item';
                 chatItem.innerHTML = `
@@ -3613,15 +3610,12 @@
                 `;
                 chatHistoryElement.appendChild(chatItem);
             });
-        
+            
             const loadMoreBtn = document.getElementById('loadMoreBtn');
-            if (allChats.length > 5) {
-                loadMoreBtn.style.display = 'block';
-            } else {
+            if (loadMoreBtn) {
                 loadMoreBtn.style.display = 'none';
             }
-        
-            // Reset search input and show all chats
+            
             const searchInput = document.querySelector('.sidebar-section input[type="text"]');
             searchInput.value = '';
             searchChats();
