@@ -1868,14 +1868,14 @@
           console.log('Turnstile token:', token);
         }
   
-        window.onload = function() {
+        document.addEventListener('DOMContentLoaded', function() {
           console.log('All Cookies:', document.cookie);
           const sessionCookie = getCookie('session_id');
           console.log('Session Cookie:', sessionCookie);
           if (!sessionCookie) {
             window.location.href = 'https://www.nexusapi.tech?error=login';
           }
-        };
+        });
     </script>
     <script>
         // Deprecated setup
