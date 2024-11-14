@@ -262,12 +262,17 @@
         }
     
         .chat-area {
-            flex-grow: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
+            flex-grow: 1; /* Allow the chat area to grow and fill available space */
+            overflow-y: auto; /* Enable scrolling if content overflows */
             background-color: hsl(var(--card));
             scrollbar-width: inherit;
             scrollbar-color: hsl(var(--border)) transparent;
+        }
+    
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Make the container fill the viewport height */
         }
     
         .input-area {
@@ -2038,6 +2043,26 @@
           },
           {
             "id": "llama-3.2-90b",
+            "object": "model",
+            "created": 1731473873,
+            "owned_by": "meta",
+            "tokens": 128000,
+            "pricing": {
+              "type": "per_token",
+              "coefficient": 1.5
+            },
+            "endpoints": [
+              "/v1/chat/completions"
+            ],
+            "premium_model": false,
+            "metadata": {
+              "vision": false,
+              "function_call": false,
+              "web_search": false
+            }
+          },
+          {
+            "id": "llama-3.3-7b",
             "object": "model",
             "created": 1731473873,
             "owned_by": "meta",
