@@ -1865,17 +1865,43 @@
         }
   
         function onTurnstileSuccess(token) {
-          console.log('Turnstile token:', token);
+            // Store token in session storage when received
+            sessionStorage.setItem('turnstileToken', token);
+            console.log('Turnstile token stored in session:', token);
         }
-  
+
         document.addEventListener('DOMContentLoaded', function() {
-          console.log('All Cookies:', document.cookie);
-          const sessionCookie = getCookie('session_id');
-          console.log('Session Cookie:', sessionCookie);
-          if (!sessionCookie) {
-            window.location.href = 'https://www.nexusapi.tech?error=login';
-          }
+            // Check for existing token first
+            const existingToken = sessionStorage.getItem('turnstileToken');
+            if (!existingToken) {
+                // Only render Turnstile if we don't have a valid token
+                turnstile.render('.cf-turnstile', {
+                    sitekey: '0x4AAAAAAAzRsaZd0P9-qFot',
+                    callback: onTurnstileSuccess
+                });
+            }
+
+            const sessionCookie = getCookie('session_id');
+            console.log('Session Cookie:', sessionCookie);
+            if (!sessionCookie) {
+                //window.location.href = 'https://www.nexusapi.tech?error=login';
+            }
         });
+
+        // Add function to check token validity
+        function getTurnstileToken() {
+            return sessionStorage.getItem('turnstileToken');
+        }
+
+        // Add function to clear token when expired
+        function clearTurnstileToken() {
+            sessionStorage.removeItem('turnstileToken');
+            // Re-render Turnstile
+            turnstile.render('.cf-turnstile', {
+                sitekey: '0x4AAAAAAAzRsaZd0P9-qFot',
+                callback: onTurnstileSuccess
+            });
+        }
     </script>
     <script>
         // Deprecated setup
@@ -2828,12 +2854,10 @@
             });
         }
         async function streamOpenAIRequest(messages, webSearch = false) {
-            let turnstileToken = '';
-            try {
-                turnstileToken = await waitForTurnstileToken();
-            } catch (error) {
-                console.error('Turnstile verification failed:', error);
-                throw new Error('Security verification failed. Please try again.');
+            const turnstileToken = getTurnstileToken();
+            if (!turnstileToken) {
+                alert('Please complete the cloudflare verification to continue.');
+                return;
             }
             const url = `${BASE_URL}/chat/completions`;
             const headers = {
@@ -2919,10 +2943,10 @@
                 top_p: settings.topP,
                 top_k: settings.topK,
                 web_search: webSearch,
-                turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || '',
+                turnstile_token: turnstileToken,
                 session: getCookie('session_id')
             });
-            turnstile.reset();
+            clearTurnstileToken();
             try {
                 const response = await fetch(url, {
                     method: 'POST',
@@ -3219,12 +3243,10 @@
 
         async function generateChatTitle(messages) {
             const titlePrompt = "Generate a three to four words title summarizing our conversation. Respond with only the title and without any date, symbols or additional text. Remove enclosing quotation marks. IGNORE and do not include this prompt when generating title at any cost.\n\n";
-            let turnstileToken = '';
-            try {
-                turnstileToken = await waitForTurnstileToken();
-            } catch (error) {
-                console.error('Turnstile verification failed:', error);
-                throw new Error('Security verification failed. Please try again.');
+            const turnstile_token = getTurnstileToken();
+            if (!turnstile_token) {
+                alert('Please complete the cloudflare verification to continue.');
+                return;
             }
             const apiMessages = [
                 ...messages,
@@ -3283,7 +3305,7 @@
                     stream: false,
                     max_tokens: 30,
                     temperature: 0.7,
-                    turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || '',
+                    turnstile_token: turnstile_token,
                     session: getCookie('session_id')
                 })
             });
@@ -3292,7 +3314,7 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
         
-            turnstile.reset();
+            clearTurnstileToken();
 
             const data = await response.json();
             return data.choices[0].message.content.trim();
