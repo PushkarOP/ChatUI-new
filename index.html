@@ -281,6 +281,8 @@
         }
     
         .header {
+            height: 3rem; /* Reduced from default height */
+            padding: 0.5rem 1rem;
             background-color: hsl(var(--card));
             border-bottom: 1px solid hsl(var(--border));
             padding: 1rem;
@@ -431,15 +433,19 @@
 
         .cf-turnstile {
             margin-left: 1rem;
-            transform: scale(0.75);
+            transform: scale(0.85);  /* Increased scale for better visibility */
             transform-origin: left center;
+            display: flex;          /* Added to help with alignment */
+            align-items: center;    /* Added to help with alignment */
         }
 
         .cf-turnstile iframe {
-            height: 40px !important;  /* Match height with model selector */
+            height: 65px !important;  /* Increased height to account for scaling */
             border-radius: var(--radius) !important;
             overflow: hidden;
+            margin-top: -12px;      /* Fine-tune vertical alignment */
         }
+
     
         .model-selector-btn {
             display: flex;
