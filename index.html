@@ -157,25 +157,58 @@
         }
         
         .navigation-item {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 0.5rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            color: hsl(var(--foreground));
-            transition: background-color 0.2s;
+            border-radius: 12px;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 0.75rem;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .navigation-item:hover {
-            background-color: hsl(var(--accent));
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--yellow-500));
+            transform: scale(1.1) rotate(3deg);
         }
         
         .navigation-item.active {
-            background-color: hsl(var(--primary));
-            color: hsl(var(--primary-foreground));
+            background: linear-gradient(to bottom right, hsl(var(--yellow-500) / 0.2), hsl(var(--orange-500) / 0.2));
+            border: 1px solid hsl(var(--yellow-500) / 0.3);
+            color: hsl(var(--yellow-500));
+        }
+    
+        .navigation-item svg {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        .navigation-item:hover svg {
+            transform: rotate(12deg);
+        }
+    
+        /* Add tooltip styles */
+        .navigation-item::after {
+            content: attr(title);
+            position: absolute;
+            left: calc(100% + 1rem);
+            padding: 0.25rem 0.75rem;
+            background-color: hsl(var(--background));
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            color: hsl(var(--yellow-500));
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+            transition: opacity 0.3s;
+        }
+    
+        .navigation-item:hover::after {
+            opacity: 1;
         }
     
 
@@ -548,7 +581,7 @@
         }
     
         .chat-history {
-            max-height: calc(100vh - 400px);
+            max-height: calc(100vh - 280px);
             overflow-y: auto;
             scroll-behavior: smooth;
         }
@@ -1566,10 +1599,6 @@
                 margin-bottom: 0.25rem;
             }
 
-            .chat-history {
-                max-height: calc(100vh - 469px);
-            }
-
             .chat-item {
                 width: 86vw;
             }
@@ -1614,18 +1643,46 @@
         <div class="sidebar-container">
             <div class="navigation-sidebar">
                 <div class="navigation-top">
-                    <div class="navigation-item active" onclick="switchPlayground('chat')" title="Chat Playground">
+                    <!-- Chat (Current) -->
+                    <div class="navigation-item active" onclick="switchPlayground('chat')" title="Chat">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                         </svg>
                     </div>
-                    <div class="navigation-item" onclick="switchPlayground('image')" title="Image Playground">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                            <polyline points="21 15 16 10 5 21"></polyline>
+                
+                    <a href="https://image.nexusapi.tech/profile" class="navigation-item" title="Profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
-                    </div>
+                    </a>
+                
+                    <!-- Gallery -->
+                    <a href="https://image.nexusapi.tech/gallery" class="navigation-item" title="Gallery">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </a>
+                
+                    <!-- Draw -->
+                    <a href="https://image.nexusapi.tech/" class="navigation-item" title="Draw">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                    </a>
+                
+                    <!-- Home -->
+                    <a href="https://www.nexusapi.tech/" class="navigation-item" title="Home">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                    </a>
+
+                    <!-- API (New) -->
+                    <a href="https://www.nexusapi.tech/partners" class="navigation-item" title="API">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                        </svg>
+                    </a>
                 </div>
                 <div class="navigation-bottom">
                     <button id="darkModeToggle" class="icon-button" aria-label="Toggle dark mode">
@@ -1639,7 +1696,7 @@
                             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
                         </svg>
                     </a>
-                    <span class="version-text">v 1.0.6</span>
+                    <span class="version-text">v 1.0.8</span>
                 </div>
             </div>
         
@@ -1670,7 +1727,7 @@
                     </button>
                     <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
       
-                        <button class="btn btn-ghost" style="width: 48%;" onclick="openSettingsModal()">
+                        <button class="btn btn-ghost" style="width: 100%;" onclick="openSettingsModal()">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="3"></circle>
                                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -1727,13 +1784,6 @@
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="17 8 12 3 7 8"></polyline>
                             <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                    </button>
-                    <button class="icon-button" onclick="uploadImage()" aria-label="Upload image" title="Upload image">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                            <polyline points="21 15 16 10 5 21"></polyline>
                         </svg>
                     </button>
                     <button class="icon-button" onclick="clearContext()" aria-label="Clear context" title="Clear context">
@@ -1884,7 +1934,7 @@
           const sessionCookie = getCookie('session_id');
           console.log('Session Cookie:', sessionCookie);
           if (!sessionCookie) {
-            window.location.href = 'https://www.nexusapi.tech?error=login';
+            //window.location.href = 'https://www.nexusapi.tech?error=login';
           }
         });
     </script>
@@ -2198,10 +2248,10 @@
                     ...currentChat.messages
                 ];
                 const title = await generateChatTitle(apiMessages);
-                
-                // Update the chat name
-                currentChat.name = title;
-                await putInStore(CHAT_STORE, currentChat);
+                if (title) {
+                    currentChat.name = title;
+                    await putInStore(CHAT_STORE, currentChat);
+                }
             }
         
            // updateChatHistorySidebar();
@@ -3494,6 +3544,28 @@
             }
         }
 
+        function generateChatName() {
+            const adjectives = [
+                "Curious", "Brilliant", "Cosmic", "Mystic", "Quantum", "Creative", 
+                "Digital", "Electric", "Stellar", "Dynamic", "Infinite", "Vibrant",
+                "Ethereal", "Luminous", "Nebulous", "Radiant", "Serene", "Zenith",
+                "Astral", "Celestial", "Enigmatic", "Harmonic", "Lunar", "Solar"
+            ];
+            
+            const nouns = [
+                "Explorer", "Voyager", "Discovery", "Journey", "Quest", "Odyssey",
+                "Venture", "Horizon", "Galaxy", "Nexus", "Prism", "Cipher",
+                "Phoenix", "Atlas", "Oracle", "Pulse", "Echo", "Vision",
+                "Beacon", "Chronicle", "Meridian", "Zenith", "Nova", "Cosmos"
+            ];
+
+            const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+            const noun = nouns[Math.floor(Math.random() * nouns.length)];
+            const number = Math.floor(Math.random() * 90 + 10); // Generates number between 10-99
+            
+            return `${adjective} ${noun} ${number}`;
+        }
+
         async function sendMessage() {
             const userInput = document.getElementById('userInput');
             const chatArea = document.getElementById('chatArea');
@@ -3550,7 +3622,7 @@
                 if (currentChatId) {
                     currentChat = await getFromStore(CHAT_STORE, currentChatId);
                 } else {
-                    currentChatId = `Chat ${Date.now()}`;
+                    currentChatId = generateChatName();
                     currentChat = { id: currentChatId, name: currentChatId, messages: [], model: selectedModel };
                 }
         
