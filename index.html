@@ -1853,17 +1853,28 @@
         </div>
     </div>
     <script>
-        function getCookie(name) {
-          const cookies = document.cookie.split(';').map(cookie => cookie.trim());
-          console.log('Cookies Array:', cookies); 
-          for (let cookie of cookies) {
-            if (cookie.startsWith(name + '=')) {
-              return cookie.substring((name + '=').length);
-            }
-          }
-          return null;
+        function setCookie(name, value, minutes) {
+            const date = new Date();
+            date.setTime(date.getTime() + (minutes * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
         }
-  
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function deleteCookie(name) {
+            document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+        }
+        
         function onTurnstileSuccess(token) {
           console.log('Turnstile token:', token);
         }
@@ -2807,15 +2818,42 @@
             renderLaTeX(); 
             chatArea.scrollTop = chatArea.scrollHeight;
         }
+        function isTokenExpired(token) {
+            try {
+                // Turnstile tokens are JWTs - split and decode the payload
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                // Check if the token has expired (exp is in seconds)
+                return payload.exp * 1000 < Date.now();
+            } catch (error) {
+                console.error('Error checking token expiration:', error);
+                return true; // Assume expired if there's an error
+            }
+        }
 
-        function waitForTurnstileToken(timeout = 5000) {
+        async function waitForTurnstileToken(timeout = 5000) {
             return new Promise((resolve, reject) => {
                 const startTime = Date.now();
                 
                 function checkToken() {
+                    // Check if we already have a valid session token
+                    const sessionToken = getCookie('turnstile_session');
+                    if (sessionToken && !isTokenExpired(sessionToken)) {
+                        resolve(sessionToken);
+                        return;
+                    }
+
+                    // If session token is expired or missing, clear it and get a new one
+                    if (sessionToken) {
+                        deleteCookie('turnstile_session');
+                        turnstile.reset();
+                    }
+
+                    // Get new token from Turnstile
                     const token = document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value;
                     
                     if (token) {
+                        // Set session cookie with the token
+                        setCookie('turnstile_session', token, 30); // 30 minutes expiry
                         resolve(token);
                     } else if (Date.now() - startTime >= timeout) {
                         reject(new Error('Turnstile verification timed out'));
@@ -2919,10 +2957,9 @@
                 top_p: settings.topP,
                 top_k: settings.topK,
                 web_search: webSearch,
-                turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || '',
+                turnstile_token: turnstileToken,
                 session: getCookie('session_id')
             });
-            turnstile.reset();
             try {
                 const response = await fetch(url, {
                     method: 'POST',
@@ -3283,7 +3320,7 @@
                     stream: false,
                     max_tokens: 30,
                     temperature: 0.7,
-                    turnstile_token: document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value || '',
+                    turnstile_token: turnstileToken,
                     session: getCookie('session_id')
                 })
             });
@@ -3291,8 +3328,6 @@
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-        
-            turnstile.reset();
 
             const data = await response.json();
             return data.choices[0].message.content.trim();
