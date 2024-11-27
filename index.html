@@ -854,8 +854,6 @@
             background-color: #2d2d2d;
             padding: 1rem;
             border-radius: var(--radius);
-            position: relative;  
-            z-index: 1;         
         }
     
         .markdown-content code {
@@ -885,7 +883,6 @@
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            z-index: 10;
         }
     
         .copy-btn:hover  {
@@ -3276,10 +3273,7 @@
         
             let processedContent = content
                 .replace(regexes.codeBlock, (match, language, code) => 
-                    `<div class="markdown-content" style="position: relative;">
-                        <pre><code class="language-${language || ''}">${hljs.highlightAuto(code.trim(), [language]).value}</code></pre>
-                        <button class="copy-btn" style="position: absolute; top: 5px; right: 5px;">Copy</button>
-                    </div>`
+                    `<div class="markdown-content"><pre><code class="language-${language || ''}">${hljs.highlightAuto(code.trim(), [language]).value}</code></pre><button class="copy-btn">Copy</button></div>`
                 );
         
             const lines = processedContent.split('\n');
