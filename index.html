@@ -851,9 +851,9 @@
         }
     
         .markdown-content pre {
-            background-color: #2d2d2d;
-            padding: 1rem;
-            border-radius: var(--radius);
+            position: relative;
+            padding: 2.5rem 1rem 1rem;
+            margin: 1rem 0;
         }
     
         .markdown-content code {
@@ -873,20 +873,20 @@
 
         .copy-btn {
             position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background-color: hsl(var(--primary));
-            color: hsl(var(--primary-foreground));
-            border: none;
+            right: 8px;
+            top: 8px;
+            padding: 4px 8px;
+            font-size: 12px;
             border-radius: var(--radius);
-            padding: 0.25rem 0.5rem;
-            font-size: 1rem;
-            font-weight: bold;
+            background-color: hsl(var(--secondary));
+            border: 1px solid hsl(var(--border));
+            color: hsl(var(--secondary-foreground));
             cursor: pointer;
+            transition: all 0.2s ease;
         }
     
-        .copy-btn:hover  {
-            background-color: hsl(var(--primary) / 0.9);
+        .copy-btn:hover {
+            background-color: hsl(var(--secondary-hover));
         }
     
         .settings-modal {
