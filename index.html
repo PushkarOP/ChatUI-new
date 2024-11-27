@@ -3273,7 +3273,7 @@
         
             let processedContent = content
                 .replace(regexes.codeBlock, (match, language, code) => 
-                    `<div class="markdown-content"><pre><code class="language-${language || ''}">${hljs.highlightAuto(code.trim(), [language]).value}</code></pre><button class="copy-btn">Copy</button></div>`
+                    `<div class="markdown-content"><pre><code class="language-${language || ''}">${hljs.highlightAuto(code.trim(), [language]).value.replace(/\n/g, '<br>')}</code></pre><button class="copy-btn">Copy</button></div>`
                 );
         
             const lines = processedContent.split('\n');
