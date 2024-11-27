@@ -880,7 +880,8 @@
             border: none;
             border-radius: var(--radius);
             padding: 0.25rem 0.5rem;
-            font-size: 0.8rem;
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
         }
     
@@ -3433,7 +3434,7 @@
             copyButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const codeBlock = button.previousElementSibling;
-                    const code = codeBlock.textContent.trim();
+                    const code = codeBlock.querySelector('code').innerText;
                     navigator.clipboard.writeText(code).then(() => {
                         button.textContent = 'Copied!';
                         setTimeout(() => {
