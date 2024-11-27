@@ -3273,7 +3273,7 @@
         
             let processedContent = content
                 .replace(regexes.codeBlock, (match, language, code) => 
-                    `<div class="markdown-content"><pre><code class="language-${language || ''}">${hljs.highlightAuto(code.trim(), [language]).value}</code></pre><button class="copy-btn">Copy</button></div>`
+                    `<div class="markdown-content"><pre><code class="language-${language || ''}">${hljs.highlightAuto(code.trim(), [language]).value}</code><button class="copy-btn" aria-label="Copy code">Copy</button></pre></div>`
                 );
         
             const lines = processedContent.split('\n');
@@ -3432,13 +3432,32 @@
         function setupCopyButtons(container) {
             const copyButtons = container.querySelectorAll('.copy-btn');
             copyButtons.forEach(button => {
+                // Move button inside pre element and style it
+                const preElement = button.previousElementSibling;
+                button.style.position = 'absolute';
+                button.style.right = '8px';
+                button.style.top = '8px';
+                preElement.style.position = 'relative';
+                preElement.appendChild(button);
+
                 button.addEventListener('click', () => {
-                    const codeBlock = button.previousElementSibling;
-                    const code = codeBlock.querySelector('code').innerText;
-                    navigator.clipboard.writeText(code).then(() => {
+                    const codeBlock = button.parentElement.querySelector('code');
+                    // Replace HTML entities and preserve newlines
+                    const decodedText = codeBlock.innerText
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>')
+                        .replace(/&amp;/g, '&');
+                    
+                    navigator.clipboard.writeText(decodedText).then(() => {
+                        const originalText = button.textContent;
                         button.textContent = 'Copied!';
+                        button.style.backgroundColor = 'hsl(var(--primary))';
+                        button.style.color = 'hsl(var(--primary-foreground))';
+                        
                         setTimeout(() => {
-                            button.textContent = 'Copy';
+                            button.textContent = originalText;
+                            button.style.backgroundColor = '';
+                            button.style.color = '';
                         }, 2000);
                     });
                 });
