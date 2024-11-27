@@ -281,7 +281,7 @@
         }
     
         .header {
-            height: 3rem; /* Reduced from default height */
+            height: 2.5rem; /* Reduced from default height */
             padding: 0.5rem 1rem;
             background-color: hsl(var(--card));
             border-bottom: 1px solid hsl(var(--border));
@@ -3407,9 +3407,42 @@
 
         function copyMessage(button) {
             const messageContent = button.closest('.message-container').querySelector('.message-content');
-            const textToCopy = messageContent.innerText;
+            
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = messageContent.innerHTML;
+            
+            const brRegex = /<br\s*[\/]?>/gi;
+            tempDiv.innerHTML = tempDiv.innerHTML.replace(brRegex, '\n');
+            
+            const codeBlocks = tempDiv.querySelectorAll('pre code');
+            codeBlocks.forEach(block => {
+                const plainText = block.textContent;
+                const language = block.className.replace('language-', '').trim();
+                block.parentElement.outerHTML = `\`\`\`${language}\n${plainText}\n\`\`\`\n`;
+            });
+            
+            const inlineCodes = tempDiv.querySelectorAll('code:not(pre code)');
+            inlineCodes.forEach(code => {
+                code.outerHTML = `\`${code.textContent}\``;
+            });
+            
+            const lists = tempDiv.querySelectorAll('ul, ol');
+            lists.forEach(list => {
+                const items = list.querySelectorAll('li');
+                items.forEach(item => {
+                    item.innerHTML = `${list.tagName === 'UL' ? '- ' : '1. '}${item.innerHTML}\n`;
+                });
+                list.outerHTML = Array.from(items).map(item => item.innerHTML).join('');
+            });
+            
+            let textToCopy = tempDiv.textContent.trim();
+            
             navigator.clipboard.writeText(textToCopy).then(() => {
-                alert('Message copied to clipboard!');
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
             });
         }
 
