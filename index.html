@@ -2277,12 +2277,20 @@
                 systemMessages.messages.push(content);
                 await putInStore(SYSTEM_STORE, systemMessages);
             } else if (role === 'clear') {
-                currentChat.messages.push({ role, content: JSON.parse(content) });
+                currentChat.messages.push({ 
+                    role, 
+                    content: JSON.parse(content),
+                    timestamp: new Date().toISOString() // Add timestamp to messages
+                });
             } else {
                 if (!currentChat.messages) {
                     currentChat.messages = [];
                 }
-                currentChat.messages.push({ role, content: JSON.parse(content) });
+                currentChat.messages.push({ 
+                    role, 
+                    content: JSON.parse(content),
+                    timestamp: new Date().toISOString() // Add timestamp to messages
+                });
             }
         
             await putInStore(CHAT_STORE, currentChat);
@@ -3759,9 +3767,16 @@
             chatHistoryElement.innerHTML = '';
             
             const allChats = await getAllFromStore(CHAT_STORE);
-            const reversedChats = allChats.reverse();
+            // Sort chats by most recent first
+            const sortedChats = allChats.sort((a, b) => {
+                const aLastMessage = a.messages[a.messages.length - 1];
+                const bLastMessage = b.messages[b.messages.length - 1];
+                const aTime = aLastMessage ? new Date(aLastMessage.timestamp || 0) : new Date(0);
+                const bTime = bLastMessage ? new Date(bLastMessage.timestamp || 0) : new Date(0);
+                return bTime - aTime; // Reverse chronological order
+            });
             
-            reversedChats.forEach(chat => {
+            sortedChats.forEach(chat => {
                 const chatItem = document.createElement('div');
                 chatItem.className = 'chat-item';
                 chatItem.innerHTML = `
