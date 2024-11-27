@@ -221,7 +221,20 @@
         .navigation-bottom {
             gap: 1rem;
         }
+        .streaming-metrics {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem;
+            font-size: 0.8rem;
+            border-top: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            transition: opacity 0.3s ease-in-out;
+        }
 
+        .streaming-metrics.hidden {
+            display: none;
+        }
         .version-text {
             font-size: 0.7rem;
             color: hsl(var(--muted-foreground));
@@ -1254,7 +1267,7 @@
 
         .prompt-title {
             color: hsl(var(--muted-foreground)); 
-            margin-top: 12rem;
+            margin-top: 2rem;  
             font-size: 1.2rem;
         }
 
@@ -1691,6 +1704,12 @@
                     </a>
                 </div>
                 <div class="navigation-bottom">
+                    <button id="metricsToggle" class="icon-button" aria-label="Toggle metrics">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 3v18h18"></path>
+                            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path>
+                        </svg>
+                    </button>
                     <button id="darkModeToggle" class="icon-button" aria-label="Toggle dark mode">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="5"/>
@@ -1942,6 +1961,26 @@
           if (!sessionCookie) {
             //window.location.href = 'https://www.nexusapi.tech?error=login';
           }
+          const metricsToggle = document.getElementById('metricsToggle');
+            const streamingMetrics = document.getElementById('streamingMetrics');
+            
+            // Load saved preference
+            const metricsHidden = localStorage.getItem('metricsHidden') === 'true';
+            if (metricsHidden) {
+                streamingMetrics.classList.add('hidden');
+                metricsToggle.style.backgroundColor = '';
+            } else {
+                metricsToggle.style.backgroundColor = 'hsl(var(--primary))';
+            }
+
+            metricsToggle.addEventListener('click', function() {
+                streamingMetrics.classList.toggle('hidden');
+                const isHidden = streamingMetrics.classList.contains('hidden');
+                localStorage.setItem('metricsHidden', isHidden);
+                
+                // Update button style
+                metricsToggle.style.backgroundColor = isHidden ? '' : 'hsl(var(--primary))';
+            });
         });
     </script>
     <script>
