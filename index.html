@@ -1956,7 +1956,7 @@
             topP: parseFloat(localStorage.getItem('topP')) || 1.0,
             topK: parseInt(localStorage.getItem('topK')) || 5,
             suggestRelatedQuestions: localStorage.getItem('suggestRelatedQuestions') === 'true',
-            aiGeneratedTitle: localStorage.getItem('aiGeneratedTitle') === 'true' 
+            aiGeneratedTitle: localStorage.getItem('aiGeneratedTitle') === 'false' 
         };
         //-------------------
 
@@ -2304,7 +2304,7 @@
               topP: parseFloat(localStorage.getItem('topP')),
               topK: parseInt(localStorage.getItem('topK')),
               suggestRelatedQuestions: localStorage.getItem('suggestRelatedQuestions') === 'true',
-              aiGeneratedTitle: localStorage.getItem('aiGeneratedTitle') === 'true'
+              aiGeneratedTitle: localStorage.getItem('aiGeneratedTitle') === 'false'
             };
           
             await putInStore(SETTINGS_STORE, { key: 'settings', value: oldSettings });
@@ -3408,35 +3408,90 @@
         function copyMessage(button) {
             const messageContent = button.closest('.message-container').querySelector('.message-content');
             
+            // Create a temporary element
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = messageContent.innerHTML;
             
-            const brRegex = /<br\s*[\/]?>/gi;
-            tempDiv.innerHTML = tempDiv.innerHTML.replace(brRegex, '\n');
-            
-            const codeBlocks = tempDiv.querySelectorAll('pre code');
+            // Process code blocks first
+            const codeBlocks = tempDiv.querySelectorAll('.markdown-content');
             codeBlocks.forEach(block => {
-                const plainText = block.textContent;
-                const language = block.className.replace('language-', '').trim();
-                block.parentElement.outerHTML = `\`\`\`${language}\n${plainText}\n\`\`\`\n`;
+                const code = block.querySelector('code');
+                if (code) {
+                    const language = Array.from(code.classList)
+                        .find(cls => cls.startsWith('language-'))
+                        ?.replace('language-', '') || '';
+                    const content = code.textContent.trim();
+                    block.outerHTML = `\n\`\`\`${language}\n${content}\n\`\`\`\n\n`;
+                }
             });
             
-            const inlineCodes = tempDiv.querySelectorAll('code:not(pre code)');
-            inlineCodes.forEach(code => {
-                code.outerHTML = `\`${code.textContent}\``;
-            });
+            // Process other elements
+            const processNode = (node) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    return node.textContent;
+                }
+                
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    switch (node.tagName.toLowerCase()) {
+                        case 'p':
+                            return processChildren(node) + '\n\n';
+                        case 'br':
+                            return '\n';
+                        case 'code':
+                            if (!node.closest('pre')) { // inline code
+                                return `\`${node.textContent}\``;
+                            }
+                            return node.textContent;
+                        case 'ul':
+                            return processChildren(node) + '\n';
+                        case 'ol':
+                            return processChildren(node) + '\n';
+                        case 'li':
+                            const parent = node.parentElement;
+                            const prefix = parent.tagName.toLowerCase() === 'ul' ? '- ' : `${getListItemNumber(node)}. `;
+                            return prefix + processChildren(node) + '\n';
+                        case 'strong':
+                            return `**${processChildren(node)}**`;
+                        case 'em':
+                            return `*${processChildren(node)}*`;
+                        case 'h1':
+                            return `# ${processChildren(node)}\n\n`;
+                        case 'h2':
+                            return `## ${processChildren(node)}\n\n`;
+                        case 'h3':
+                            return `### ${processChildren(node)}\n\n`;
+                        case 'a':
+                            return `[${processChildren(node)}](${node.href})`;
+                        default:
+                            return processChildren(node);
+                    }
+                }
+                return '';
+            };
             
-            const lists = tempDiv.querySelectorAll('ul, ol');
-            lists.forEach(list => {
-                const items = list.querySelectorAll('li');
-                items.forEach(item => {
-                    item.innerHTML = `${list.tagName === 'UL' ? '- ' : '1. '}${item.innerHTML}\n`;
-                });
-                list.outerHTML = Array.from(items).map(item => item.innerHTML).join('');
-            });
+            const processChildren = (node) => {
+                return Array.from(node.childNodes)
+                    .map(child => processNode(child))
+                    .join('');
+            };
             
-            let textToCopy = tempDiv.textContent.trim();
+            const getListItemNumber = (li) => {
+                return Array.from(li.parentElement.children).indexOf(li) + 1;
+            };
             
+            // Process the content
+            let textToCopy = processChildren(tempDiv)
+                // Clean up multiple newlines
+                .replace(/\n\s*\n\s*\n/g, '\n\n')
+                // Clean up spaces before newlines
+                .replace(/[ \t]+\n/g, '\n')
+                // Trim extra whitespace while preserving code block indentation
+                .split('\n').map(line => 
+                    line.trim().length > 0 ? line : ''
+                ).join('\n')
+                .trim();
+            
+            // Copy to clipboard
             navigator.clipboard.writeText(textToCopy).then(() => {
                 const originalText = button.textContent;
                 button.textContent = '✓ Copied!';
