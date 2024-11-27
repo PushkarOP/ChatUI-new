@@ -3413,82 +3413,38 @@
             tempDiv.innerHTML = messageContent.innerHTML;
             
             // Process code blocks first
-            const codeBlocks = tempDiv.querySelectorAll('.markdown-content');
+            const codeBlocks = tempDiv.querySelectorAll('pre code');
             codeBlocks.forEach(block => {
-                const code = block.querySelector('code');
-                if (code) {
-                    const language = Array.from(code.classList)
-                        .find(cls => cls.startsWith('language-'))
-                        ?.replace('language-', '') || '';
-                    const content = code.textContent.trim();
-                    block.outerHTML = `\n\`\`\`${language}\n${content}\n\`\`\`\n\n`;
-                }
+                // Preserve line breaks in code blocks
+                const codeLines = block.textContent.split('\n');
+                // Filter out empty lines at start and end, but preserve empty lines in middle
+                const trimmedLines = codeLines.reduce((acc, line, i) => {
+                    // Always keep lines that have content
+                    if (line.trim()) {
+                        acc.push(line);
+                    }
+                    // Keep empty lines that are between content lines
+                    else if (i > 0 && i < codeLines.length - 1) {
+                        acc.push(line);
+                    }
+                    return acc;
+                }, []);
+                
+                const language = Array.from(block.classList)
+                    .find(cls => cls.startsWith('language-'))
+                    ?.replace('language-', '') || '';
+                    
+                block.parentElement.outerHTML = `\n\`\`\`${language}\n${trimmedLines.join('\n')}\n\`\`\`\n\n`;
             });
             
-            // Process other elements
-            const processNode = (node) => {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    return node.textContent;
-                }
-                
-                if (node.nodeType === Node.ELEMENT_NODE) {
-                    switch (node.tagName.toLowerCase()) {
-                        case 'p':
-                            return processChildren(node) + '\n\n';
-                        case 'br':
-                            return '\n';
-                        case 'code':
-                            if (!node.closest('pre')) { // inline code
-                                return `\`${node.textContent}\``;
-                            }
-                            return node.textContent;
-                        case 'ul':
-                            return processChildren(node) + '\n';
-                        case 'ol':
-                            return processChildren(node) + '\n';
-                        case 'li':
-                            const parent = node.parentElement;
-                            const prefix = parent.tagName.toLowerCase() === 'ul' ? '- ' : `${getListItemNumber(node)}. `;
-                            return prefix + processChildren(node) + '\n';
-                        case 'strong':
-                            return `**${processChildren(node)}**`;
-                        case 'em':
-                            return `*${processChildren(node)}*`;
-                        case 'h1':
-                            return `# ${processChildren(node)}\n\n`;
-                        case 'h2':
-                            return `## ${processChildren(node)}\n\n`;
-                        case 'h3':
-                            return `### ${processChildren(node)}\n\n`;
-                        case 'a':
-                            return `[${processChildren(node)}](${node.href})`;
-                        default:
-                            return processChildren(node);
-                    }
-                }
-                return '';
-            };
-            
-            const processChildren = (node) => {
-                return Array.from(node.childNodes)
-                    .map(child => processNode(child))
-                    .join('');
-            };
-            
-            const getListItemNumber = (li) => {
-                return Array.from(li.parentElement.children).indexOf(li) + 1;
-            };
-            
-            // Process the content
-            let textToCopy = processChildren(tempDiv)
-                // Clean up multiple newlines
+            // Get the text content while preserving line breaks
+            let textToCopy = tempDiv.textContent
+                // Remove extra blank lines
                 .replace(/\n\s*\n\s*\n/g, '\n\n')
-                // Clean up spaces before newlines
-                .replace(/[ \t]+\n/g, '\n')
-                // Trim extra whitespace while preserving code block indentation
-                .split('\n').map(line => 
-                    line.trim().length > 0 ? line : ''
-                ).join('\n')
+                // Remove trailing spaces
+                .split('\n')
+                .map(line => line.trimRight())
+                .join('\n')
                 .trim();
             
             // Copy to clipboard
