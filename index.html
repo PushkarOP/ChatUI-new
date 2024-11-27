@@ -2941,16 +2941,23 @@
                 function checkToken() {
                     // Check if we already have a valid session token
                     const sessionToken = getCookie('turnstile_session');
-                    if (sessionToken) {
+                    if (sessionToken && !isTokenExpired(sessionToken)) {
                         resolve(sessionToken);
                         return;
                     }
 
-                    // Only get new token if we don't have a session token
+                    // If session token is expired or missing, clear it and get a new one
+                    if (sessionToken) {
+                        deleteCookie('turnstile_session');
+                        turnstile.reset();
+                    }
+
+                    // Get new token from Turnstile
                     const token = document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value;
                     
                     if (token) {
-                        setCookie('turnstile_session', token, 5); 
+                        // Set session cookie with the token
+                        setCookie('turnstile_session', token, 30); // 30 minutes expiry
                         resolve(token);
                     } else if (Date.now() - startTime >= timeout) {
                         reject(new Error('Turnstile verification timed out'));
