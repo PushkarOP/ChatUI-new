@@ -873,29 +873,22 @@
 
         .copy-btn {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            background: hsl(var(--secondary));
-            border: 1px solid hsl(var(--border));
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border: none;
             border-radius: var(--radius);
-            color: hsl(var(--secondary-foreground));
-            font-size: 12px;
+            padding: 0.25rem 0.5rem;
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
-
-        .copy-btn:hover {
-            background: hsl(var(--secondary-hover));
+    
+        .copy-btn:hover  {
+            background-color: hsl(var(--primary) / 0.9);
         }
-
-        .markdown-content {
-            position: relative;
-        }
-
+    
         .settings-modal {
             display: none;
             position: fixed;
@@ -3244,37 +3237,7 @@
                 totalTokens.innerHTML = `<span style="color: hsl(var(--primary)); font-weight: 800;">N/A</span> TOTAL TOKENS`;
             }
         }
-        function copyCodeBlock(button) {
-            const codeBlock = button.previousElementSibling;
-            const code = codeBlock.querySelector('code').innerText;
-            
-            // Create a temporary textarea to handle newlines properly
-            const textarea = document.createElement('textarea');
-            textarea.value = code;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-            
-            try {
-                document.execCommand('copy');
-                const span = button.querySelector('span');
-                const originalText = span.textContent;
-                span.textContent = 'Copied!';
-                button.style.backgroundColor = 'hsl(var(--primary))';
-                button.style.color = 'hsl(var(--primary-foreground))';
-                
-                setTimeout(() => {
-                    span.textContent = originalText;
-                    button.style.backgroundColor = '';
-                    button.style.color = '';
-                }, 2000);
-            } catch (err) {
-                console.error('Failed to copy text:', err);
-            } finally {
-                document.body.removeChild(textarea);
-            }
-        }
+
         function processMarkdown(content) {
             if (!content) return '';
         
@@ -3310,16 +3273,7 @@
         
             let processedContent = content
                 .replace(regexes.codeBlock, (match, language, code) => 
-                    `<div class="markdown-content">
-                        <pre><code class="language-${language || ''}">${hljs.highlightAuto(code.trim(), [language]).value}</code></pre>
-                        <button class="copy-btn" onclick="copyCodeBlock(this)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            <span>Copy</span>
-                        </button>
-                    </div>`
+                    `<div class="markdown-content"><pre><code class="language-${language || ''}">${hljs.highlightAuto(code.trim(), [language]).value}</code></pre><button class="copy-btn">Copy</button></div>`
                 );
         
             const lines = processedContent.split('\n');
@@ -3862,7 +3816,6 @@
                     }
                 }
             }
-        }
         }
     
         function setupRevertActionButtons() {
