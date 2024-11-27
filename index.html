@@ -3445,55 +3445,21 @@
             });
         }
 
-        function copyMessage(button) {
-            const messageContent = button.closest('.message-container').querySelector('.message-content');
-            
-            // Create a temporary element
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = messageContent.innerHTML;
-            
-            // Process code blocks first
-            const codeBlocks = tempDiv.querySelectorAll('pre code');
-            codeBlocks.forEach(block => {
-                // Preserve line breaks in code blocks
-                const codeLines = block.textContent.split('\n');
-                // Filter out empty lines at start and end, but preserve empty lines in middle
-                const trimmedLines = codeLines.reduce((acc, line, i) => {
-                    // Always keep lines that have content
-                    if (line.trim()) {
-                        acc.push(line);
-                    }
-                    // Keep empty lines that are between content lines
-                    else if (i > 0 && i < codeLines.length - 1) {
-                        acc.push(line);
-                    }
-                    return acc;
-                }, []);
-                
-                const language = Array.from(block.classList)
-                    .find(cls => cls.startsWith('language-'))
-                    ?.replace('language-', '') || '';
-                    
-                block.parentElement.outerHTML = `\n\`\`\`${language}\n${trimmedLines.join('\n')}\n\`\`\`\n\n`;
-            });
-            
-            // Get the text content while preserving line breaks
-            let textToCopy = tempDiv.textContent
-                // Remove extra blank lines
-                .replace(/\n\s*\n\s*\n/g, '\n\n')
-                // Remove trailing spaces
-                .split('\n')
-                .map(line => line.trimRight())
-                .join('\n')
-                .trim();
-            
-            // Copy to clipboard
+        async function copyMessage(button) {
+            // save current chat history to IndexedDB
+            const chat = await getFromStore(CHAT_STORE, currentChatId);
+            const messageIndex = Array.from(document.getElementById('chatArea').children).indexOf(button.closest('.message-container'));
+
+            let textToCopy = '';
+            try {
+                const message = chat.messages[messageIndex].content;
+                textToCopy = message.map(item => item.text).join('\n');
+            } catch (error) {
+                console.error('Error copying message:', error);
+                textToCopy = button.closest('.message-container').querySelector('.message-content').innerText;
+            }
             navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = button.textContent;
-                button.textContent = '✓ Copied!';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 2000);
+                alert('Message copied to clipboard!');
             });
         }
 
