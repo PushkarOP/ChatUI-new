@@ -3007,7 +3007,23 @@
                 const startTime = Date.now();
                 
                 function checkToken() {
-                    //pass
+                    const token = window.turnstileToken;
+                    if (token) {
+                        if (isTokenExpired(token)) {
+                            // If token is expired, refresh it
+                            window.turnstile.reset();
+                            setTimeout(checkToken, 100);
+                        } else {
+                            resolve(token);
+                        }
+                    } else {
+                        // If no token yet, check again in 100ms
+                        if (Date.now() - startTime < timeout) {
+                            setTimeout(checkToken, 100);
+                        } else {
+                            reject(new Error('Timeout waiting for security verification'));
+                        }
+                    }
                 }
 
                 checkToken();
@@ -3875,6 +3891,7 @@
                     }
                 }
             }
+        }
         }
     
         function setupRevertActionButtons() {
