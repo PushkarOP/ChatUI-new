@@ -23,7 +23,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
     <!-- Add KaTeX CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
     <!-- Add KaTeX JS -->
@@ -1774,7 +1774,7 @@
                     <div id="modelSelectorContent" class="model-selector-content">
                         <!-- Models will be dynamically loaded here -->
                     </div>
-                    <div class="cf-turnstile" data-sitekey="0x4AAAAAAA1rMkBKAhwCJYUE"></div>
+                    <div id="captcha"></div>
                 </div>
                 <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
             </div>
@@ -1928,6 +1928,14 @@
             <button class="btn btn-primary" style="margin-top: 1rem;" onclick="saveSettings()">Save Settings</button>
         </div>
     </div>
+    <script>
+        function onloadTurnstileCallback() {
+            turnstile.render('#captcha', {
+            sitekey: '0x4AAAAAAA1rMkBKAhwCJYUE',
+            theme: 'dark',
+            });
+        }
+    </script>
     <script>
         function setCookie(name, value, minutes) {
             const date = new Date();
@@ -2999,31 +3007,7 @@
                 const startTime = Date.now();
                 
                 function checkToken() {
-                    // Check if we already have a valid session token
-                    const sessionToken = getCookie('turnstile_session');
-                    if (sessionToken && !isTokenExpired(sessionToken)) {
-                        resolve(sessionToken);
-                        return;
-                    }
-
-                    // If session token is expired or missing, clear it and get a new one
-                    if (sessionToken) {
-                        deleteCookie('turnstile_session');
-                        turnstile.reset();
-                    }
-
-                    // Get new token from Turnstile
-                    const token = document.querySelector('.cf-turnstile input[name="cf-turnstile-response"]')?.value;
-                    
-                    if (token) {
-                        // Set session cookie with the token
-                        setCookie('turnstile_session', token, 30); // 30 minutes expiry
-                        resolve(token);
-                    } else if (Date.now() - startTime >= timeout) {
-                        reject(new Error('Turnstile verification timed out'));
-                    } else {
-                        setTimeout(checkToken, 100);
-                    }
+                    //pass
                 }
 
                 checkToken();
