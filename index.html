@@ -23,7 +23,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <!-- Add KaTeX CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
     <!-- Add KaTeX JS -->
@@ -1774,7 +1774,7 @@
                     <div id="modelSelectorContent" class="model-selector-content">
                         <!-- Models will be dynamically loaded here -->
                     </div>
-                    <div id="captcha"></div>
+                    <div id="turnstile-container"></div>
                 </div>
                 <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
             </div>
@@ -3007,22 +3007,13 @@
                 const startTime = Date.now();
                 
                 function checkToken() {
-                    const token = window.turnstileToken;
+                    const token = window.turnstile.getResponse();
                     if (token) {
-                        if (isTokenExpired(token)) {
-                            // If token is expired, refresh it
-                            window.turnstile.reset();
-                            setTimeout(checkToken, 100);
-                        } else {
-                            resolve(token);
-                        }
+                        resolve(token);
+                    } else if (Date.now() - startTime < timeout) {
+                        setTimeout(checkToken, 100);
                     } else {
-                        // If no token yet, check again in 100ms
-                        if (Date.now() - startTime < timeout) {
-                            setTimeout(checkToken, 100);
-                        } else {
-                            reject(new Error('Timeout waiting for security verification'));
-                        }
+                        reject(new Error('Timeout waiting for security verification'));
                     }
                 }
 
@@ -3030,9 +3021,22 @@
             });
         }
         async function streamOpenAIRequest(messages, webSearch = false) {
-            let turnstileToken = '';
+            let turnstileToken;
             try {
-                turnstileToken = await waitForTurnstileToken();
+                // Get the token directly from the Turnstile widget
+                turnstileToken = window.turnstile.getResponse();
+                
+                // If no token exists, try to render the widget
+                if (!turnstileToken) {
+                    window.turnstile.render('#turnstile-container', {
+                        sitekey: 'your-site-key',
+                        callback: function(token) {
+                            turnstileToken = token;
+                        }
+                    });
+                    // Wait for token
+                    turnstileToken = await waitForTurnstileToken();
+                }
             } catch (error) {
                 console.error('Turnstile verification failed:', error);
                 throw new Error('Security verification failed. Please try again.');
